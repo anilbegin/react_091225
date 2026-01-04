@@ -2,6 +2,10 @@ import React from "react";
 import Page from "./Page";
 
 function HomeGuest() {
+  function handleSubmit(e) {
+    e.preventDefault()
+    alert('hello')
+  }
   return (
     <Page title="Welcome! | ComplexApp" wide={true}>
       <div className="row align-items-center">
@@ -10,7 +14,7 @@ function HomeGuest() {
           <p className="lead text-muted">Are you sick of short tweets and impersonal &ldquo;shared&rdquo; posts that are reminiscent of the late 90&rsquo;s email forwards? We believe getting back to actually writing is the key to enjoying the internet again.</p>
         </div>
         <div className="col-lg-5 pl-lg-5 pb-3 py-lg-5">
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="username-register" className="text-muted mb-1">
                 <small>Username</small>
@@ -30,7 +34,7 @@ function HomeGuest() {
               <input id="password-register" name="password" className="form-control" type="password" placeholder="Create a password" />
             </div>
             <button type="submit" className="py-3 mt-4 btn btn-lg btn-success btn-block">
-              Sign up for ComplexApp
+              Sign up
             </button>
           </form>
         </div>
