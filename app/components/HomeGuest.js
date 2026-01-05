@@ -1,10 +1,20 @@
 import React from "react";
 import Page from "./Page";
+import Axios from "axios";
 
 function HomeGuest() {
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    alert('hello')
+    try {
+        await Axios.post('http://localhost:8080/register', {
+        username: "test", 
+        email: "test@test.com", 
+        password: "qwerty123456"
+      })
+      console.log('user was successfully created.')
+    } catch (e) {
+      console.log(e.response.data)
+    }
   }
   return (
     <Page title="Welcome! | ComplexApp" wide={true}>
