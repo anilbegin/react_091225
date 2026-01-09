@@ -1,6 +1,12 @@
 import React, { useEffect } from "react"
 
 function HeaderLoggedIn(props) {
+  function handleLogout() {
+    props.setLoggedIn(false)
+    localStorage.removeItem('complexAppToken')
+    localStorage.removeItem('complexAppUsername')
+    localStorage.removeItem('complexAppAvatar')
+  }
   return (
     <div className="flex-row my-3 my-md-0">
       <a href="#" className="text-white mr-2 header-search-icon">
@@ -11,12 +17,12 @@ function HeaderLoggedIn(props) {
         <span className="chat-count-badge text-white"> </span>
       </span>
       <a href="#" className="mr-2">
-        <img className="small-header-avatar" src="https://gravatar.com/avatar/bbf83f8935b4d8c70600975d96ac33b9?s=128" />
+        <img className="small-header-avatar" src={localStorage.getItem('complexAppAvatar')} />
       </a>
       <a className="btn btn-sm btn-success mr-2" href="/create-post">
         Create Post
       </a>
-      <button onClick={() => props.setLoggedIn(false)} className="btn btn-sm btn-secondary">
+      <button onClick={handleLogout} className="btn btn-sm btn-secondary">
         Sign Out
       </button>
     </div>
