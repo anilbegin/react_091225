@@ -15,6 +15,7 @@ import Home from './components/Home'
 import CreatePost from './components/CreatePost'
 import ViewSinglePost from './components/ViewSinglePost'
 import FlashMessages from './components/FlashMessages'
+import Profile from './components/Profile'
 
 import StateContext from './StateContext'
 import DispatchContext from './DispatchContext'
@@ -66,6 +67,7 @@ function Main() {
           <FlashMessages messages={state.flashMessages} />
           <Header />
           <Routes>
+            <Route path='/profile/:username/*' element={<Profile />} />
             <Route path="/" element={state.loggedIn ? <Home /> : <HomeGuest />} />
             <Route path='/create-post' element={<CreatePost />} />
             <Route path='/post/:id' element={<ViewSinglePost />} />
