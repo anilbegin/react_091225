@@ -10,22 +10,22 @@ function ViewSinglePost() {
   const {id} = useParams()
 
   useEffect(() => {
-    const ourRequest = Axios.CancelToken.source()
+    const ourRequest = new AbortController()
 
     async function fetchPost() {
       try {
         const response = await Axios.get(`/post/${id}`, {
-          cancelToken: ourRequest.token
+          signal: ourRequest.signal
         })
         setPost(response.data)
         setIsLoading(false)
       } catch (e) {
-        console.log('there was a problem')
+        console.log(e.name)
       }
     }
     fetchPost()
     return () => {
-      ourRequest.cancel
+      ourRequest.abort()
     }
   } ,[])
 
