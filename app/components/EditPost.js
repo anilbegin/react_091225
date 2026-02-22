@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { useImmerReducer } from "use-immer"
 import { useParams, Link } from "react-router-dom"
 import Axios from 'axios'
 import Page from './Page'
 import LoadingDotsIcon from './LoadingDotsIcon'
+import StateContext from '../StateContext'
 
 function EditPost() {
+  const appState = useContext(StateContext)
+
   const originalState = {
     title: {
       value: "",
@@ -30,10 +33,24 @@ function EditPost() {
       draft.body.value = action.value.body
       draft.isFetching = false
       return
+      case "titleChange" :
+        draft.title.value = action.value
+        return 
+      case "bodyChange" :
+        draft.body.value = action.value
+        return  
+      case "submitRequest" :
+        draft.sendCount++
+        return  
     }
   }
 
   const [state, dispatch] = useImmerReducer(ourReducer, originalState)
+
+  function submitHandler(e) {
+    e.preventDefault()
+    dispatch({type: 'submitRequest'})
+  }  
 
   useEffect(() => {
     const ourRequest = new AbortController()
@@ -55,6 +72,33 @@ function EditPost() {
     }
   } ,[])
 
+  useEffect(() => {
+    if(state.sendCount) {
+      const ourRequest = new AbortController()
+
+      async function fetchPost() {
+        try {
+          const response = await Axios.post(`/post/${state.id}/edit`, {
+            title: state.title.value,
+            body: state.body.value,
+            token: appState.user.token 
+          }, {
+            signal: ourRequest.signal
+          })
+          alert('Congrats, post updated!')
+          //console.log(response.data)
+          //dispatch({type: "fetchComplete", value: response.data})
+        } catch (e) {
+          console.log(e.name)
+        }
+      }
+      fetchPost()
+      return () => {
+        ourRequest.abort()
+      }
+    }
+  } ,[state.sendCount])
+
   if(state.isFetching) 
     return (
       <Page title='...'>
@@ -64,19 +108,19 @@ function EditPost() {
 
   return (
     <Page title='Edit Post'>
-      <form>
+      <form onSubmit={submitHandler}>
         <div className="form-group">
           <label htmlFor="post-title" className="text-muted mb-1">
             <small>Title</small>
           </label>
-          <input value={state.title.value} autoFocus name="title" id="post-title" className="form-control form-control-lg form-control-title" type="text" placeholder="" autoComplete="off" />
+          <input onChange={e => dispatch({type: 'titleChange', value: e.target.value})} value={state.title.value} autoFocus name="title" id="post-title" className="form-control form-control-lg form-control-title" type="text" placeholder="" autoComplete="off" />
         </div>
 
         <div className="form-group">
           <label htmlFor="post-body" className="text-muted mb-1 d-block">
             <small>Body Content</small>
           </label>
-          <textarea value={state.body.value} name="body" id="post-body" 
+          <textarea onChange={e => dispatch({type: 'bodyChange', value: e.target.value})} value={state.body.value} name="body" id="post-body" 
           className="body-content tall-textarea form-control" type="text" />
         </div>
 
