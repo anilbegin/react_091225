@@ -5,9 +5,11 @@ import Axios from 'axios'
 import Page from './Page'
 import LoadingDotsIcon from './LoadingDotsIcon'
 import StateContext from '../StateContext'
+import DispatchContext from '../DispatchContext'
 
 function EditPost() {
   const appState = useContext(StateContext)
+  const appDispatch = useContext(DispatchContext)
 
   const originalState = {
     title: {
@@ -42,6 +44,12 @@ function EditPost() {
       case "submitRequest" :
         draft.sendCount++
         return  
+      case "saveRequestStarted" :
+        draft.isSaving = true
+        return 
+      case "saveRequestFinished" :
+        draft.isSaving = false  
+        return    
     }
   }
 
@@ -49,9 +57,10 @@ function EditPost() {
 
   function submitHandler(e) {
     e.preventDefault()
-    dispatch({type: 'submitRequest'})
+    dispatch({type: 'submitRequest'}) // triggers Axios request 2
   }  
 
+// Axios request 1 for fetching Data
   useEffect(() => {
     const ourRequest = new AbortController()
 
@@ -72,11 +81,13 @@ function EditPost() {
     }
   } ,[])
 
+// Axios request 2 for Saving Changes to a Post  
   useEffect(() => {
     if(state.sendCount) {
+      dispatch({type: 'saveRequestStarted'})
       const ourRequest = new AbortController()
 
-      async function fetchPost() {
+      async function updatePost() {
         try {
           const response = await Axios.post(`/post/${state.id}/edit`, {
             title: state.title.value,
@@ -85,14 +96,13 @@ function EditPost() {
           }, {
             signal: ourRequest.signal
           })
-          alert('Congrats, post updated!')
-          //console.log(response.data)
-          //dispatch({type: "fetchComplete", value: response.data})
+          dispatch({type: 'saveRequestFinished'})
+          appDispatch({type: 'flashMessage', value: 'Post was Updated.'})
         } catch (e) {
           console.log(e.name)
         }
       }
-      fetchPost()
+      updatePost()
       return () => {
         ourRequest.abort()
       }
@@ -124,7 +134,9 @@ function EditPost() {
           className="body-content tall-textarea form-control" type="text" />
         </div>
 
-        <button className="btn btn-primary">Save Updates</button>
+        <button disabled={state.isSaving} className="btn btn-primary">
+          {state.isSaving ? 'Saving...' : 'Save Updates'}
+        </button>
       </form>
     </Page>
   )
