@@ -25,7 +25,8 @@ function EditPost() {
     isFetching: true,
     isSaving: false,
     id: useParams().id,
-    sendCount: 0
+    sendCount: 0,
+    notFound: false
   }
 
   function ourReducer(draft, action) {
@@ -66,6 +67,9 @@ function EditPost() {
           draft.body.message = 'You cannot leave this field blank'
         }
         return
+      case 'notFound' :
+        draft.notFound = true  
+        return
     }
   }
 
@@ -88,7 +92,11 @@ function EditPost() {
           signal: ourRequest.signal
         })
         console.log(response.data)
-        dispatch({type: "fetchComplete", value: response.data})
+        if(response.data) {
+          dispatch({type: "fetchComplete", value: response.data})
+        } else {
+          dispatch({type: 'notFound'})
+        }
       } catch (e) {
         console.log(e.name)
       }
@@ -127,6 +135,18 @@ function EditPost() {
     }
   } ,[state.sendCount])
 
+  if(state.notFound) {
+    return (
+      <Page title='Not Found'>
+        <div className="text-center">
+          <h2>Whoops, we cannot find that page.</h2>
+          <p className="lead text-muted">You can always visit the <Link to="/">homepage</Link> to get a fresh start.</p>
+
+        </div>
+      </Page>
+    )
+  }
+
   if(state.isFetching) 
     return (
       <Page title='...'>
@@ -136,7 +156,11 @@ function EditPost() {
 
   return (
     <Page title='Edit Post'>
-      <form onSubmit={submitHandler}>
+      <Link className="small font-weight-bold" to={`/post/${state.id}`}>
+        &laquo; Back to post permalink
+      </Link>
+
+      <form className="mt-3" onSubmit={submitHandler}>
         <div className="form-group">
           <label htmlFor="post-title" className="text-muted mb-1">
             <small>Title</small>
