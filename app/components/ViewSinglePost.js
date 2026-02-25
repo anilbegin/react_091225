@@ -6,6 +6,7 @@ import LoadingDotsIcon from './LoadingDotsIcon'
 import ReactMarkdown from 'react-markdown'
 // import {Tooltip} from 'react-tooltip'
 import { Tooltip as ReactTooltip } from "react-tooltip"
+import NotFound from "./NotFound"
 
 function ViewSinglePost() {
   const [isLoading, setIsLoading] = useState(true)
@@ -32,6 +33,10 @@ function ViewSinglePost() {
       ourRequest.abort()
     }
   } ,[])
+
+  if(!isLoading && !post) {
+    return <NotFound />
+  }
 
   if(isLoading) 
     return (

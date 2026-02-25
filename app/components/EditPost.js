@@ -6,6 +6,7 @@ import Page from './Page'
 import LoadingDotsIcon from './LoadingDotsIcon'
 import StateContext from '../StateContext'
 import DispatchContext from '../DispatchContext'
+import NotFound from "./NotFound"
 
 function EditPost() {
   const appState = useContext(StateContext)
@@ -136,15 +137,7 @@ function EditPost() {
   } ,[state.sendCount])
 
   if(state.notFound) {
-    return (
-      <Page title='Not Found'>
-        <div className="text-center">
-          <h2>Whoops, we cannot find that page.</h2>
-          <p className="lead text-muted">You can always visit the <Link to="/">homepage</Link> to get a fresh start.</p>
-
-        </div>
-      </Page>
-    )
+    return <NotFound />
   }
 
   if(state.isFetching) 
