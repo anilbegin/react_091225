@@ -50,11 +50,18 @@ function ViewSinglePost() {
   const date = new Date(post.createdDate)
   const dateFormatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
 
+  function isOwner() {
+    if(appState.loggedIn) {
+      return appState.user.username == post.author.username
+    }
+    return false
+  }
+
   return (
     <Page title={post.title}>
        <div className="d-flex justify-content-between">
         <h2>{post.title}</h2>
-        {(appState.user.username == post.author.username) && 
+        {isOwner() && 
           <span className="pt-2">
           <Link to={`/post/${post._id}/edit`} data-tooltip-content="Edit" data-tooltip-id="edit" className="text-primary mr-2">
             <i className="fas fa-edit"></i>
