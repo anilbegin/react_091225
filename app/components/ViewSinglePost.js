@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import { useParams, Link } from "react-router-dom"
 import Axios from 'axios'
 import Page from './Page'
@@ -7,11 +7,13 @@ import ReactMarkdown from 'react-markdown'
 // import {Tooltip} from 'react-tooltip'
 import { Tooltip as ReactTooltip } from "react-tooltip"
 import NotFound from "./NotFound"
+import StateContext from '../StateContext'
 
 function ViewSinglePost() {
   const [isLoading, setIsLoading] = useState(true)
   const [post, setPost] = useState()
   const {id} = useParams()
+  const appState = useContext(StateContext)
 
   useEffect(() => {
     const ourRequest = new AbortController()
@@ -52,7 +54,8 @@ function ViewSinglePost() {
     <Page title={post.title}>
        <div className="d-flex justify-content-between">
         <h2>{post.title}</h2>
-        <span className="pt-2">
+        {(appState.user.username == post.author.username) && 
+          <span className="pt-2">
           <Link to={`/post/${post._id}/edit`} data-tooltip-content="Edit" data-tooltip-id="edit" className="text-primary mr-2">
             <i className="fas fa-edit"></i>
           </Link>
@@ -63,6 +66,7 @@ function ViewSinglePost() {
           </a>
           <ReactTooltip id="delete" className="custom-tooltip" />
         </span>
+        }
       </div>
 
       <p className="text-muted small mb-4">
