@@ -19,18 +19,18 @@ function HeaderLoggedIn(props) {
 
   return (
     <div className="flex-row my-3 my-md-0">
-      <a data-tooltip-id="search" data-tooltip-content="Search" onClick={handleSearchIcon} href="#" className="text-white mr-2 header-search-icon">
+      <a data-tooltip-id="search" data-tooltip-content="Search" onClick={handleSearchIcon} href="#" className="text-white mr-3 header-search-icon">
         <i className="fas fa-search"></i>
       </a>
       <ReactTooltip place="left-end" id='search' className="custom-tooltip"/>
       {' '}
-      <span data-tooltip-id="chat" data-tooltip-content='Chat' className="mr-2 header-chat-icon text-white">
+      <span data-tooltip-id="chat" data-tooltip-content='Chat' className="mr-3 header-chat-icon text-white">
         <i className="fas fa-comment"></i>
         <span className="chat-count-badge text-white"> </span>
       </span>
       <ReactTooltip place="right-end" id="chat" />
       {' '}
-      <Link data-tooltip-id="profile" data-tooltip-content='My Profile' to={`/profile/${appState.user.username}`} className="mr-2">
+      <Link data-tooltip-id="profile" data-tooltip-content='My Profile' to={`/profile/${appState.user.username}`} className="mr-3">
         <img className="small-header-avatar" src={appState.user.avatar} />
       </Link>
       <ReactTooltip place="right-end" id="profile" />
