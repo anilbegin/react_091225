@@ -26,7 +26,7 @@ function ViewSinglePost() {
         const response = await Axios.get(`/post/${id}`, {
           signal: ourRequest.signal
         })
-        console.log(response.data)
+      //  console.log(response.data)
         setPost(response.data)
         setIsLoading(false)
       } catch (e) {
