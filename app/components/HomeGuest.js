@@ -1,10 +1,13 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useContext} from "react";
 import Page from "./Page";
 import Axios from "axios";
 import {useImmerReducer} from 'use-immer'
 import { CSSTransition } from "react-transition-group";
+import DispatchContext from '../DispatchContext'
 
 function HomeGuest() {
+  const appDispatch = useContext(DispatchContext)
+
   const initialState = {
     username: {
       value: "",
@@ -47,7 +50,7 @@ function HomeGuest() {
           draft.username.hasErrors = true
           draft.username.message = "Username must be atleast 3 characters"
         }
-        if(!draft.username.hasErrors) {
+        if(!draft.username.hasErrors && !action.noRequest) {
           draft.username.checkCount++
         }
         return
@@ -69,7 +72,7 @@ function HomeGuest() {
           draft.email.hasErrors = true
           draft.email.message = "You must provide a valid Email Address"
         }
-        if(!draft.email.hasErrors) { // only if there are no prior errors.. check for Unique
+        if(!draft.email.hasErrors && !action.noRequest) { // only if there are no prior errors.. check for Unique
           draft.email.checkCount++
         }
         return
@@ -97,6 +100,11 @@ function HomeGuest() {
         }
         return
       case "submitForm" :
+        if(!draft.username.hasErrors && draft.username.isUnique &&
+           !draft.email.hasErrors && draft.email.isUnique &&
+           !draft.password.hasErrors) {
+              draft.submitCount++
+           }
         return            
     }
   }
@@ -172,7 +180,7 @@ function HomeGuest() {
           }, {
             signal : ourRequest.signal
           })
-          console.log(response.data)
+        //  console.log(response.data)
           dispatch({type: 'emailUniqueResults', 
                     value: response.data})
         } catch (e) {
@@ -185,9 +193,42 @@ function HomeGuest() {
     }
   }, [state.email.checkCount])
 
+  // FORM SUBMIT
+  useEffect(() => {
+    if(state.submitCount) {
+      const ourRequest = new AbortController()
+
+      async function fetchResults() {
+        try {
+          const response = await Axios.post('/register', {
+            username : state.username.value,
+            email : state.email.value,
+            password: state.password.value
+          }, {
+            signal : ourRequest.signal
+          })
+          console.log(response.data)
+          appDispatch({type: 'login', data: response.data})
+          appDispatch({type: 'flashMessage', value: 'Congrats! Welcome to your new account.'})
+        } catch (e) {
+          console.log('there was a problem, or the request was cancelled.')
+        }
+      }
+      fetchResults()
+      
+      return () => ourRequest.abort() 
+    }
+  }, [state.submitCount])
+
   function handleSubmit(e) {
     e.preventDefault()
-    alert('this is a test')
+    dispatch({type: 'usernameImmediately', value: state.username.value})
+    dispatch({type: 'usernameAfterDelay', value: state.username.value, noRequest: true})
+    dispatch({type: 'emailImmediately', value: state.email.value})
+    dispatch({type: 'emailAfterDelay', value: state.email.value, noRequest: true})
+    dispatch({type: 'passwordImmediately', value: state.password.value})
+    dispatch({type: 'passwordAfterDelay', value: state.password.value})
+    dispatch({type: 'submitForm'}) 
   }
   return (
     <Page title="Welcome! | ComplexApp" wide={true}>
