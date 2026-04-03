@@ -14,14 +14,14 @@ import About from './components/About'
 import Terms from './components/Terms'
 import Home from './components/Home'
 const CreatePost = React.lazy(() => import('./components/CreatePost'))
+const Chat = React.lazy(() => import('./components/Chat'))
 //const ViewSinglePost = React.lazy(() => import('./components/ViewSinglePost'))
 import ViewSinglePost from './components/ViewSinglePost'
 import FlashMessages from './components/FlashMessages'
 import Profile from './components/Profile'
 import EditPost from './components/EditPost'
 import NotFound from './components/NotFound'
-const Search = React.lazy(() => import('./components/Search'))
-import Chat from './components/Chat'
+import Search from './components/Search'
 
 import StateContext from './StateContext'
 import DispatchContext from './DispatchContext'
@@ -142,11 +142,9 @@ function Main() {
         }  
           <CSSTransition timeout={330} in={state.isSearchOpen} 
                     classNames="search-overlay" unmountOnExit>
-            <Suspense fallback={<LoadingDotsIcon />}>
               <Search />
-            </Suspense>
           </CSSTransition>
-          <Chat />
+          {state.loggedIn && <Chat />}
           <Footer />
         </BrowserRouter>
       </DispatchContext.Provider>
