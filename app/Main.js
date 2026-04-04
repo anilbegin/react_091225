@@ -4,7 +4,8 @@ import { useImmerReducer } from 'use-immer'
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import Axios from 'axios'
 import { CSSTransition } from 'react-transition-group'
-Axios.defaults.baseURL = 'http://localhost:8080'
+Axios.defaults.baseURL = process.env.BACKENDURL || ""
+
 
 // my components
 import Header from './components/Header'
