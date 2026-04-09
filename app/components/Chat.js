@@ -28,7 +28,7 @@ function Chat() {
 
   // receive message Broadcasts from server
   useEffect(() => {
-    socket.current = io("http://localhost:8080")
+    socket.current = io(process.env.BACKENDURL || "https://react-091225-backend-api.onrender.com")
 
     socket.current.on("chatFromServer", (message) => {
       setState(draft => {
