@@ -7,7 +7,7 @@ function Page(props) {
     // also scroll up to the very top of the screen when ..
     //.. you switch to this page.
     window.scrollTo(0, 0)
-  }, [])
+  }, [props.title])
   return (
     <Container wide={props.wide}>
       {props.children}
